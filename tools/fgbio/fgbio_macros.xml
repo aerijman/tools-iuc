@@ -53,7 +53,7 @@
 
 **Additional information**
 
-Additional information about Picard tools is available from Picard web site at http://broadinstitute.github.io/picard/ .
+Additional information about fgbio tools is available from Picard web site at https://github.com/nebiolabs/hts-scripts/wiki/fgbio .
     </token>
 
 
@@ -62,9 +62,9 @@ Additional information about Picard tools is available from Picard web site at h
 
 **Inputs, outputs, and parameters**
 
-Either a SAM file or a BAM file must be supplied. Galaxy automatically coordinate-sorts all uploaded BAM files.
+A BAM file must be supplied, together with a reference genome. Galaxy automatically coordinate-sorts all uploaded BAM files.
 
-From Picard documentation( http://broadinstitute.github.io/picard/)::
+From Picard documentation(https://github.com/nebiolabs/hts-scripts/wiki/fgbio_FindSwitchbackReads)::
 
     </token>
     <token name="@RG@">

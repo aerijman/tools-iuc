@@ -14,19 +14,20 @@
     #set $reference_fasta_filename = "localref.fa"
     @handle_reference_source@
     
-    java -Xmx8g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar fgbio-0.8.1.jar FindSwitchbackReads  
+    java -Xmx8g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /Users/aerijman/Documents/projects/fgbio-0.8.1.jar FindSwitchbackReads  
     --input='$escaped_element_identifier'
-    --outpupt='OutPut.bam'
+    --output='OutPut.bam'
     --metrics=s1.switchback
     --ref='${reference_fasta_filename}'
     --max-offset=${max_offset}
     --max-gap='${max_gap}'
-    --min_length='${min_length}'
-    --max_error_rate='${max_error_rate}'
-    --dont_unmap='${dont_unmap}';
+    --min-length='${min_length}'
+    --max-error-rate='${max_error_rate}'
+    --dont-unmap='${dont_unmap}'
+    --sort-order='Coordinate';
   ]]></command>  
   <inputs>
-    <param name='inputFile' format="sam,bam" type='data' label='SAM/BAM Input file'/>
+    <param name='inputFile' format="sam,bam" type='data' label='BAM Input file'/>
     <conditional name="reference_source">
       <param name="reference_source_selector" type="select" label="Load reference genome from">
         <option value="cached">Local cache</option>
@@ -46,11 +47,11 @@
       </when>
     </conditional>
   
-    <param name='max_offset' value="35" type='integer' label="how far away to search for the reverse-complemented sequence" help="The default value of 35 allows matches to be found when the soft-clipped sequence matches the genome starting at most 35bp from the 5prime mapped position of the read, and reading in the opposite direction."/>
-    <param name="max_gap" value="500" type="integer" label=" causes the tool to only identify a tandem read pair as a switch-back if the gap between the end of the first read and the start of the second read is +/- max-gap." />
-    <param name='min_length' value="6" type='integer' label="controls the minimum number of soft-clipped bases that must exist to trigger the search." help="Given that the search looks at 2 * max-offset locations (default=70) it is important that min-length is set such that 4^min-length >> 2 * max-offset` in order to avoid false positives."/>
-    <param name="max_error_rate" type="integer" value="0.1" label="allows for some mismatches to exist between the soft-clipped sequence and the genome when matching."/>
-    <param name="dont unmap" type="boolean" checked="false" truevalue="true" falsevalue="false" label="dont map reads when when a switch-back template is identified"/>
+    <param name='max_offset' value="35" type='integer' label="Maximum offset between ends of the two segments of the read on the reference" help="The default value of 35 allows matches to be found when the soft-clipped sequence matches the genome starting at most 35bp from the 5prime mapped position of the read, and reading in the opposite direction."/>
+    <param name="max_gap" value="500" type="integer" label="Maximum gap between R1 and R2 of tandem reads to call a template a switchback." help="Causes the tool to only identify a tandem read pair as a switch-back if the gap between the end of the first read and the start of the second read is +/- max-gap." />
+    <param name='min_length' value="6" type='integer' label="Minimum match length of the switched back segment" help="Controls the minimum number of soft-clipped bases that must exist to trigger the search. Given that the search looks at 2 * max-offset locations (default=70) it is important that min-length is set such that 4^min-length >> 2 * max-offset` in order to avoid false positives."/>
+    <param name="max_error_rate" type="float" value="0.1" label="Maximum mismatch error rate of switchback match to genome." help="Allows for some mismatches to exist between the soft-clipped sequence and the genome when matching."/>
+    <param name="dont_unmap" type="boolean" checked="false" truevalue="true" falsevalue="false" label="IF true, do NOT unmap reads from switchback templates." help="Dont map reads when when a switch-back template is identified."/>
 
     <expand macro="VS" />
 
@@ -87,35 +88,23 @@
 
 **Purpose**
 
-Program to chart the distribution of potential sequencing "single nucleotide mutation" artifacts in a SAM or BAM file.
+Program to identify swichback artifacts in a BAM file.
 
 @dataset_collections@
 
 @description@
 
-  ASSUME_SORTED=Boolean           If true (default), then the sort order in the header file will be ignored.  
-                                  Default: True
-
-  CONTEXT_SIZE=integer            The number of context bases to include on each side of the assayed base.
+  MAX-OFFSET = Integer              Maximum offset between ends of the two segments of the read on the reference. Set to 0 to
+                                    disable read-based checks. [Default: 35]  
+                                  
+  MAX-GAP = integer                 Maximum gap between R1 and R2 of tandem reads to call a template a switchback. Set to 0
+                                    to disable tandem-based checks. [Default: 500].
   
-  CONTEXT_SIZE_TO_PRINT=String    If specified, only print results for these contexts in the detail metrics output. 
-                                  However, the summary metrics output will still take all contexts into consideration.
+  MIN-LENGTH = Integer              Minimum match length of the switched back segment. [Default: 6]. 
                                 
-  DB_SNP=text file                VCF format dbSNP file, used to exclude regions around known polymorphisms from analysis.
+  MAX-ERROR = text file             Maximum mismatch error rate of switchback match to genome. [Default: 0.1].
 
-  INCLUDE_DUPLICATES=Boolean      Include duplicate reads. If set to true then all reads flagged as duplicates will be included as well.
-
-  INCLUDE_UNPAIRED=Boolean        Include unpaired reads. If set to true then all paired reads will be included as well - 
-                                  MINIMUM_INSERT_SIZE and MAXIMUM_INSERT_SIZE will be ignored.
-
-  MAXIMUM_INSERT_SIZE=Integer     The maximum insert size for a read to be included in analysis. Set to 0 to have no maximum.
-                                  Default = 600
-
-  MINIMUM_INSERT_SIZE=Integer     The minimum insert size for a read to be included in analysis. Default = 60
-
-  MINIMUM_MAPPING_QUALITY         The minimum mapping quality score for a base to be included in analysis. Default = 30
-
-  MINIMUM_QUALITY_SCORE           The minimum base quality score for a base to be included in analysis. Default = 20
+  DONT-UNMAP = Boolean              IF true, do NOT unmap reads from switchback templates. [Default: false].
 
 @more_info@
 
