@@ -20,11 +20,11 @@
        </sanitizer>
     </xml>
 
-    <token name="@TOOL_VERSION@">2.18.2</token>
+    <token name="@TOOL_VERSION@">0.8.1</token>
 
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="@TOOL_VERSION@">picard</requirement>
+            <requirement type="package" version="@TOOL_VERSION@">fgbio</requirement>
             <yield/>
         </requirements>
     </xml>
@@ -36,13 +36,18 @@
     ]]></token>
 
     <token name="@java_options@"><![CDATA[
-    _JAVA_OPTIONS=\${_JAVA_OPTIONS:-'-Xmx8g -Xms256m'} &&
+    _JAVA_OPTIONS=\${_JAVA_OPTIONS:-'-Xmx8g -XX:+AggressiveOpts -XX:+AggressiveHeap'} &&
     export _JAVA_OPTIONS &&
     ]]></token>
 
     <token name="@handle_reference_source@"><![CDATA[
+    #import re
     #if str( $reference_source.reference_source_selector ) == "history":
-        ln -s '${reference_source.ref_file}' '${reference_fasta_filename}' &&
+        #set dict_name = re.sub('.fa$','.dict', str($reference_fasta_filename))
+
+        ln -s '${reference_source.ref_file}' '${reference_fasta_filename}' && 
+        samtools dict '${reference_fasta_filename}' > '${dict_name}' &&
+
     #else:
         #set $reference_fasta_filename = str( $reference_source.ref_file.fields.path )
     #end if
@@ -53,7 +58,7 @@
 
 **Additional information**
 
-Additional information about fgbio tools is available from Picard web site at https://github.com/nebiolabs/hts-scripts/wiki/fgbio .
+Additional information about fgbio tools is available from fgbio web site at http://fulcrumgenomics.github.io/fgbio/ .
     </token>
 
 
@@ -64,7 +69,7 @@ Additional information about fgbio tools is available from Picard web site at ht
 
 A BAM file must be supplied, together with a reference genome. Galaxy automatically coordinate-sorts all uploaded BAM files.
 
-From Picard documentation(https://github.com/nebiolabs/hts-scripts/wiki/fgbio_FindSwitchbackReads)::
+From fgbio documentation(http://fulcrumgenomics.github.io/fgbio/)::
 
     </token>
     <token name="@RG@">
