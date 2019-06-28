@@ -61,13 +61,13 @@
   
   <tests>
     <test>
-      <param name="inputFile" value="chr1_sorted.bam" ftype="bam" />
+      <param name="inputFile" value="picard_ARRG_test1.bam" ftype="bam" />
       <param name="reference_source_selector" value="history"/>
-      <param name="ref_file" value="chr1.fa" />
+      <param name="ref_file" value="picard_BedToIntervalList_ref.fa" />
       <output name='table' file='table.error_rate_by_read_position.txt' ftype="tabular"  value="table.error_rate_by_read_position.txt" lines_diff="4"/>
     </test>
     <test>
-      <param name="inputFile" value="chr1_sorted.bam" ftype="bam" dbkey="hg38"/>
+      <param name="inputFile" value="picard_ARRG_test1.bam" ftype="bam" dbkey="hg38"/>
       <output name='table' file='table.error_rate_by_read_position.txt' ftype="tabular"  value="table.error_rate_by_read_position.txt" lines_diff="4"/>
       <param name="reference_source_selector" value="cached"/>
     </test>

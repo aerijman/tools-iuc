@@ -49,6 +49,7 @@
         samtools dict '${reference_fasta_filename}' > '${dict_name}' &&
 
     #else:
+        #silent $sys.stderr.write("QUE PASA!???!? filename = " + $reference_fasta_filename + " Y ref_file.path = " + $reference_source.ref_file.fields.path  + "\n" )
         #set $reference_fasta_filename = str( $reference_source.ref_file.fields.path )
     #end if
     ]]></token>
